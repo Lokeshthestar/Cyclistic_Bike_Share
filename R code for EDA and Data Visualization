@@ -1,0 +1,238 @@
+# Google Data Analytics Professional Certificate Capstone Project:
+## Lets load all the required packages: 
+
+
+library(tidyverse)
+library(ggplot2)
+library(lubridate)
+library(dplyr)
+library(readr)
+library(janitor)
+library(data.table)
+library(tidyr)
+
+
+### 2. Importing all 12 months csv files in R
+#### From June 2021 to May 2022
+
+june_2021 <- read_csv("202106-divvy-tripdata.csv") 
+july_2021 <- read_csv("202107-divvy-tripdata.csv") 
+aug_2021 <- read_csv("202108-divvy-tripdata.csv")
+sep_2021 <- read_csv("202109-divvy-tripdata.csv") 
+oct_2021 <- read_csv("202110-divvy-tripdata.csv")
+nov_2021 <- read_csv("202111-divvy-tripdata.csv") 
+dec_2021 <- read_csv("202112-divvy-tripdata.csv") 
+jan_2022 <- read_csv("202201-divvy-tripdata.csv")
+feb_2022 <- read_csv("202202-divvy-tripdata.csv")
+march_2022 <- read_csv("202203-divvy-tripdata.csv") 
+apirl_2022 <- read_csv("202204-divvy-tripdata.csv") 
+may_2022 <- read_csv("202205-divvy-tripdata.csv") 
+
+
+### Columns in dataset
+colnames(june_2021)
+colnames(july_2021)
+colnames(aug_2021)
+colnames(sep_2021)
+colnames(oct_2021)
+colnames(nov_2021)
+colnames(dec_2021)
+colnames(jan_2022)
+colnames(feb_2022)
+colnames(march_2022)
+colnames(apirl_2022)
+colnames(may_2022)
+
+### structure of dataset
+str(june_2021)
+str(july_2021)
+str(aug_2021)
+str(sep_2021)
+str(oct_2021)
+str(nov_2021)
+str(dec_2021)
+str(jan_2022)
+str(feb_2022)
+str(march_2022)
+str(apirl_2022)
+str(may_2022)
+
+### While checking the datatypes of the columns mentioned in the datasets , 
+we come across columns named "start_station_id", "end_station_id", which are either present in character format or in integer format.
+So to convert the column in a common dataset. we convert the column in character format
+
+#### For start station id
+june_2021 <-  mutate(june_2021,start_station_id = as.character(start_station_id))
+july_2021 <-  mutate(july_2021,start_station_id = as.character(start_station_id))
+aug_2021 <-  mutate(aug_2021,start_station_id = as.character(start_station_id))
+sep_2021 <-  mutate(sep_2021,start_station_id = as.character(start_station_id))
+oct_2021 <-  mutate(oct_2021,start_station_id = as.character(start_station_id))
+nov_2021 <-  mutate(nov_2021,start_station_id = as.character(start_station_id))
+dec_2021 <-  mutate(dec_2021,start_station_id = as.character(start_station_id))
+jan_2022 <-  mutate(jan_2022,start_station_id = as.character(start_station_id))
+feb_2022 <-  mutate(feb_2022,start_station_id = as.character(start_station_id))
+march_2022 <- mutate(march_2022,start_station_id = as.character(start_station_id))
+apirl_2022 <- mutate(apirl_2022,start_station_id = as.character(start_station_id))
+may_2022 <-  mutate(may_2022,start_station_id = as.character(start_station_id))
+
+
+#### For end station id
+june_2021 <-  mutate(june_2021,end_station_id = as.character(end_station_id))
+july_2021 <-  mutate(july_2021,end_station_id = as.character(end_station_id))
+aug_2021 <-  mutate(aug_2021,end_station_id = as.character(end_station_id))
+sep_2021 <-  mutate(sep_2021,end_station_id = as.character(end_station_id))
+oct_2021 <-  mutate(oct_2021,end_station_id = as.character(end_station_id))
+nov_2021 <-  mutate(nov_2021,end_station_id = as.character(end_station_id))
+dec_2021 <-  mutate(dec_2021,end_station_id = as.character(end_station_id))
+jan_2022 <-  mutate(jan_2022,end_station_id = as.character(end_station_id))
+feb_2022 <-  mutate(feb_2022,end_station_id = as.character(end_station_id))
+march_2022 <- mutate(march_2022,end_station_id = as.character(end_station_id))
+apirl_2022 <- mutate(apirl_2022,end_station_id = as.character(end_station_id))
+may_2022 <-  mutate(may_2022,end_station_id = as.character(end_station_id))
+
+
+### lets combine all 12 month data into a single dataset name 'cyclistic_df'
+cyclistic_df <- rbind(june_2021,july_2021,aug_2021,sep_2021,oct_2021,nov_2021,dec_2021,jan_2022,feb_2022,march_2022,apirl_2022,
+                      may_2022)
+
+
+### Adding column for day,day of the week, month and year
+cyclistic_df$months <- format(as.Date(cyclistic_df$started_at), "%m")
+cyclistic_df$year <- format(as.Date(cyclistic_df$started_at), "%Y")
+cyclistic_df$day <- format(as.Date(cyclistic_df$started_at), "%d")
+cyclistic_df$day_of_the_week <- format(as.Date(cyclistic_df$started_at),"%a")
+
+
+### Coverting time format
+cyclistic_df$time <- format(cyclistic_df$started_at, format = "%H:%M")
+cyclistic_df$time <- as.POSIXct(cyclistic_df$time, format = "%H:%M")
+
+
+### calculating ride_length in minutes
+cyclistic_df$ride_length <- (as.double(difftime(cyclistic_df$ended_at,cyclistic_df$started_at)))/60
+
+
+### converting ride_length column in numeric
+as.factor(cyclistic_df$ride_length)
+cyclistic_df$ride_length <- as.numeric(as.character(cyclistic_df$ride_length))
+is.numeric(cyclistic_df$ride_length)
+
+
+#### mim value of ride_length
+min(cyclistic_df$ride_length)
+
+#### total number of test ride taken
+nrow(subset(cyclistic_df, start_station_name %like% "Test"))
+
+
+#### ride_length cannot be negative so we have to remove rows having ride_length 
+less or equal to 0 and row of a test ride.
+cyclistic_df <- cyclistic_df[!(cyclistic_df$ride_length <=0),]
+cyclistic_df<- cyclistic_df[!(cyclistic_df$start_station_name %like% "Test"),]
+
+
+### checking the updated dataframe
+glimpse(cyclistic_df)
+
+#### total number of casual and member type
+table(cyclistic_df$member_casual)
+
+#### total ride_length by members type
+setNames(aggregate(ride_length ~ member_casual, cyclistic_df, sum), 
+c("member_casual", "total_ride_length"))
+
+### Maximum, Minimum, mean and median values of ride_length
+aggregate(cyclistic_df$ride_length ~ cyclistic_df$member_casual, FUN= max)
+aggregate(cyclistic_df$ride_length ~ cyclistic_df$member_casual, FUN= min)
+aggregate(cyclistic_df$ride_length ~ cyclistic_df$member_casual, FUN= mean)
+aggregate(cyclistic_df$ride_length ~ cyclistic_df$member_casual, FUN= median)
+
+### Number of rides with respect to customer type by day of the week
+cyclistic_df %>%
+  group_by(member_casual, day_of_the_week) %>%
+  summarise(no_of_rides = n(), average_duration = mean(ride_length)) %>%
+  arrange(member_casual, desc(no_of_rides))
+
+
+## VISUALIZATIONS
+### Relation between customer_type and day of the week
+
+cyclistic_df %>%  
+group_by(member_casual, day_of_the_week) %>% 
+summarise(no_of_rides = n()) %>% 
+arrange(member_casual, day_of_the_week)  %>% 
+ggplot(aes(x = day_of_the_week, y = no_of_rides, fill = member_casual)) +
+labs(title ="Total trips by customer type Vs. Day of the week") +
+geom_col(width=0.5, position = position_dodge(width=0.5)) +
+scale_y_continuous(labels = function(x) format(x, scientific = FALSE))
+
+
+### Average duration of ride by month
+
+cyclistic_df %>% 
+group_by(member_casual, months) %>%  
+summarise(no_of_rides = n(),`average_duration_(mins)`= mean(ride_length)) %>% 
+arrange(member_casual,desc(no_of_rides))
+
+
+### Total rides by month
+
+cyclistic_df %>%  
+group_by(member_casual, months) %>% 
+summarise(no_of_rides = n()) %>% 
+arrange(member_casual, months)  %>% 
+ggplot(aes(x = months, y = no_of_rides, fill = member_casual)) +
+labs(title ="Total trips by customer type Vs. Months") +
+theme(axis.text.x = element_text(angle = 30)) +
+geom_col(width=0.5, position = position_dodge(width=0.5)) +
+scale_y_continuous(labels = function(x) format(x, scientific = FALSE))
+
+
+### Average trip duration by customer type on each day of the week
+
+cyclistic_df %>%  
+group_by(member_casual, day_of_the_week) %>% 
+summarise(average_trip_duration = mean(ride_length)) %>%
+ggplot(aes(x = day_of_the_week, y = average_trip_duration, fill = member_casual)) +
+geom_col(width=0.5, position = position_dodge(width=0.5)) + 
+labs(title ="Average trip duration by customer type Vs. Day of the week")
+
+
+### Average trip duration by customer type in each month
+
+cyclistic_df %>%
+group_by(member_casual, months) %>% 
+summarise(average_trip_duration = mean(ride_length)) %>%
+ggplot(aes(x = months, y = average_trip_duration, fill = member_casual)) +
+geom_col(width=0.5, position = position_dodge(width=0.5)) + 
+labs(title ="Average trip duration by customer type Vs. Month") +
+theme(axis.text.x = element_text(angle = 30))
+
+
+### Demand of bikes over a period of 24 hours ( 1 day)
+
+cyclistic_df %>%  
+group_by(member_casual, time) %>% 
+summarise(no_of_trips = n()) %>%
+ggplot(aes(x = time, y = no_of_trips, color = member_casual, group = member_casual)) +
+geom_line() + scale_x_datetime(date_breaks = "1 hour", minor_breaks = NULL,date_labels = "%H:%M", expand = c(0,0)) +
+theme(axis.text.x = element_text(angle = 90)) + labs(title ="Demand over 24 hours of a day", x = "Time of the day")
+
+
+### Type of rides VS no of trips with respect to the customer types
+
+cyclistic_df %>%
+group_by(rideable_type, member_casual) %>%
+summarise(no_of_trips = n()) %>%  
+ggplot(aes(x= rideable_type, y=no_of_trips, fill= member_casual))+
+geom_bar(stat='identity') +
+scale_y_continuous(labels = function(x) format(x, scientific = FALSE)) +
+labs(title ="Ride type Vs. Number of trips")
+
+
+
+
+
+
+
+
