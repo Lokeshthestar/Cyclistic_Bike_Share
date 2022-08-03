@@ -22,3 +22,187 @@ feb_2022 <- read_csv("202202-divvy-tripdata.csv")
 march_2022 <- read_csv("202203-divvy-tripdata.csv") 
 apirl_2022 <- read_csv("202204-divvy-tripdata.csv") 
 may_2022 <- read_csv("202205-divvy-tripdata.csv") 
+
+
+### 3. merge all 12 months csv file in 1 year
+cyclistic_dt <- rbind(june_2021,july_2021,aug_2021,sep_2021,oct_2021,nov_2021,dec_2021,jan_2022,feb_2022,march_2022,apirl_2022,may_2022)
+
+
+### 4.Now its time to add new colummn in year dataframe which help us in analysis
+#### ride_length 
+
+cyclistic_dt$ride_length <- difftime(cyclistic_dt$ended_at, cyclistic_dt$started_at, units = "mins")
+cyclistic_dt$ride_length <- round(cyclistic_dt$ride_length, digits = 1)
+
+
+#### Date
+cyclistic_dt$date <- as.Date(cyclistic_dt$started_at)
+
+#### Day of Week
+cyclistic_dt$day_of_week <- wday(cyclistic_dt$started_at)
+cyclistic_dt$day_of_week <- format(as.Date(cyclistic_dt$date), "%A")
+
+#### Month
+cyclistic_dt$month <- format(as.Date(cyclistic_dt$date), "%m")
+
+#### Day
+cyclistic_dt$day <- format(as.Date(cyclistic_dt$date), "%d")
+
+#### Year
+cyclistic_dt$year <- format(as.Date(cyclistic_dt$date), "%Y")
+
+#### Time
+cyclistic_dt$time <- format(as.Date(cyclistic_dt$date), "%H:%M:%S")
+cyclistic_dt$time <- as_hms((cyclistic_dt$started_at))
+
+#### Hour
+cyclistic_dt$hour <- hour(cyclistic_dt$time)
+
+### 5. Adding a column for different seasons: Summer, Fall, Winter, Spring
+cyclistic_dt <-cyclistic_dt %>% mutate(season = case_when(
+month == "06"  ~ "Summer",
+month == "07"  ~ "Summer",
+month == "08"  ~ "Summer",
+month == "09" ~ "Fall",
+month == "10" ~ "Fall",
+month == "11" ~ "Fall",
+month == "12" ~ "Winter",
+month == "01" ~ "Winter",
+month == "02" ~ "Winter",
+month == "03" ~ "Spring",
+month == "04" ~ "Spring",
+month == "05" ~ "Spring",)
+)
+
+#### adding month name
+cyclistic_dt <-cyclistic_dt %>% mutate(month_name = case_when(
+month == "06"  ~ "June",
+month == "07"  ~ "July",
+month == "08"  ~ "August",
+month == "09" ~ "September",
+month == "10" ~ "October",
+month == "11" ~ "November",
+month == "12" ~ "December",
+month == "01" ~ "January",
+month == "02" ~ "February",
+month == "03" ~ "March",
+month == "04" ~ "April",
+month == "05" ~ "May",)
+)
+
+
+### 6. Adding a column for different time of day: Morning, Afternoon, Evening, Night
+cyclistic_dt <-cyclistic_dt %>% mutate(time_of_day = case_when(
+hour == "0" ~ "Night",
+hour == "1" ~ "Night",
+hour == "2" ~ "Night",
+hour == "3" ~ "Night",
+hour == "4" ~ "Night",
+hour == "5" ~ "Night",
+hour == "6" ~ "Morning",
+hour == "7" ~ "Morning",
+hour == "8" ~ "Morning",
+hour == "9" ~ "Morning",
+hour == "10" ~ "Morning",
+hour == "11" ~ "Morning",
+hour == "12" ~ "Afternoon",
+hour == "13" ~ "Afternoon",
+hour == "14" ~ "Afternoon",
+hour == "15" ~ "Afternoon",
+hour == "16" ~ "Afternoon",
+hour == "17" ~ "Afternoon",
+hour == "18" ~ "Evening",
+hour == "19" ~ "Evening",
+hour == "20" ~ "Evening",
+hour == "21" ~ "Evening",
+hour == "22" ~ "Evening",
+hour == "23" ~ "Evening")
+)
+
+### 7. Do some data cleaning
+#### remove the duplicate rows
+cyclistic_dt <- distinct(cyclistic_dt)
+
+#### remove the rows with ride_length negative and 0
+cyclistic_dt <- cyclistic_dt[!(cyclistic_dt$ride_length <=0),]
+
+#### remove the columns that we are not going to use in our analysis: start_lat, start_long, end_lat, end_lng
+cyclistic_dt <- cyclistic_dt %>%
+  select(-c(start_lat,start_lng,end_lat,end_lng))
+
+### 8. saving the csv file with different name so that we can use it in Tableau
+cyclistic_tableau <- cyclistic_dt
+
+#### download the csv file
+fwrite(cyclistic_tableau,"cyclistic_tableau.csv")
+
+### 9. Now we do some data analysis
+View(cyclistic_dt)
+
+#### Member type
+cyclistic_dt %>%
+  group_by(member_casual) %>% 
+  count(member_casual)
+
+#### Bikes's Type
+cyclistic_dt %>%
+  group_by(rideable_type) %>% count(rideable_type)
+
+#### Rides by member type
+cyclistic_dt %>%
+  group_by(member_casual, rideable_type) %>% 
+  count(rideable_type)
+
+#### hour
+cyclistic_dt %>%
+  count(hour) %>% print(n = 24)
+
+cyclistic_dt %>%
+  group_by(member_casual) %>% 
+  count(hour) %>% print(n = 48) 
+
+### As I have noticed that our system taking to much time to load the data so, to free up environment
+lets remove the monthly datasets beacause we are not gonna use these in our analysis
+remove(june_2021,july_2021,aug_2021,sep_2021,oct_2021,nov_2021,dec_2021,jan_2022,feb_2022,march_2022,apirl_2022,may_2022)
+
+
+### Performing some EDA steps
+#### Lets count total number of rides by time of day
+cyclistic_dt %>%
+  group_by(member_casual,time_of_day) %>%
+  count(time_of_day)
+
+#### Lets count total number of rides by day of week
+cyclistic_dt %>%
+  group_by(member_casual) %>%
+  count(day_of_week)
+
+#### Lets count total number of rides by day of month
+cyclistic_dt %>%
+  group_by(member_casual) %>%
+  count(day) %>%
+  print(n = 62)
+
+#### Lets count total number of rides by month
+cyclistic_dt %>%
+  group_by(member_casual) %>%
+  count(month) %>%
+print(n=24)
+
+#### Lets count total number of rides by season
+cyclistic_dt %>%
+  group_by(season,member_casual)%>%
+  count(season)%>%
+  print(n=8)
+
+### Average ride length
+cyclistic_avgRide <- cyclistic_dt %>% group_by(member_casual) %>% summarise(mean_time = mean(ride_length))
+
+
+cyclistic_dt %>% group_by( member_casual) %>% 
+  summarise_at(vars(ride_length),list(time = mean))
+
+cyclistic_dt %>% group_by(member_casual, rideable_type) %>% 
+  summarise_at(vars(ride_length),list(time = mean))
+
+
