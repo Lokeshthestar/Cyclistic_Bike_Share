@@ -1,0 +1,24 @@
+# Google Data Analytics Capstone Project
+#### Case Study: How Does a Bike-Share Navigate Speedy Success?
+
+
+### 1. So First we load the libraries that we are going to use
+library(tidyverse) # For calculations
+library(lubridate) #For dates 
+library(hms) #For time
+library(data.table) #exporting data frame
+
+### 2. Reading the all 12 months csv files in R
+#### From June 2021 to May 2022
+june_2021 <- read_csv("202106-divvy-tripdata.csv") 
+july_2021 <- read_csv("202107-divvy-tripdata.csv") 
+aug_2021 <- read_csv("202108-divvy-tripdata.csv")
+sep_2021 <- read_csv("202109-divvy-tripdata.csv") 
+oct_2021 <- read_csv("202110-divvy-tripdata.csv")
+nov_2021 <- read_csv("202111-divvy-tripdata.csv") 
+dec_2021 <- read_csv("202112-divvy-tripdata.csv") 
+jan_2022 <- read_csv("202201-divvy-tripdata.csv")
+feb_2022 <- read_csv("202202-divvy-tripdata.csv")
+march_2022 <- read_csv("202203-divvy-tripdata.csv") 
+apirl_2022 <- read_csv("202204-divvy-tripdata.csv") 
+may_2022 <- read_csv("202205-divvy-tripdata.csv") 
