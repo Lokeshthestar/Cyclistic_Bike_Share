@@ -12,3 +12,11 @@ Over the years, we see a significant divergence of total trip duration from May 
 
 Based on the casual rider’s monthly total trips durations, the best odds to launch the new marketing campaign is between April to May. Also, consider different price strategies like seasonal passes to increase the conversion rate.
 The best would be if the marketing team can run a survey to collect the data from current casual riders, understand what kind of features or benefits they look for when considering subscribe annual members.
+
+
+## Suggestions
+Personalize discounts and show perks in the membership program based on their preferences and riding habits.
+
+Emphasize the benefits of memberships, including discounts during busy times of the year like during Summer, or on the weekends. 
+
+Have existing members to share their stories about how using Cyclistic's system has changed their life, to create a sense of community, offer a discount if they do so this will help encourage new riders to join the program. 
