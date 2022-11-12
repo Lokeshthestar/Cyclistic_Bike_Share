@@ -20,3 +20,5 @@ Personalize discounts and show perks in the membership program based on their pr
 Emphasize the benefits of memberships, including discounts during busy times of the year like during Summer, or on the weekends. 
 
 Have existing members to share their stories about how using Cyclistic's system has changed their life, to create a sense of community, offer a discount if they do so this will help encourage new riders to join the program. 
+
+We can make the people use the trends of hastags posting on there social media accounts so that more people get to know the importance of cycling and saving gas 
